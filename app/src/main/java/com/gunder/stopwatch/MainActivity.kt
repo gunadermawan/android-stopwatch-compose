@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -22,11 +23,13 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var isBound by mutableStateOf(false)
-    private lateinit var stopWatchService: StopwatchService
+    @OptIn(ExperimentalAnimationApi::class)
+    private lateinit var stopwatchService: StopwatchService
+    @OptIn(ExperimentalAnimationApi::class)
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as StopwatchService.StopwatchBinder
-            stopWatchService = binder.getService()
+            stopwatchService = binder.getService()
             isBound = true
         }
 
@@ -36,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -47,12 +51,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                 }
                 if (isBound) {
-                    MainScreen(stopWatchService = stopWatchService)
+                    MainScreen(stopwatchService = stopwatchService)
                 }
             }
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onStart() {
         super.onStart()
         Intent(this, StopwatchService::class.java).also { intent ->

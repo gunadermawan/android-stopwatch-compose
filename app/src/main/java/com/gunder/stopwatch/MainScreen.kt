@@ -7,16 +7,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.gunder.stopwatch.service.ServiceHelper
 import com.gunder.stopwatch.service.StopwatchService
+import com.gunder.stopwatch.service.StopwatchState
+import com.gunder.stopwatch.ui.theme.Light
+import com.gunder.stopwatch.ui.theme.Red
+import com.gunder.stopwatch.utils.Constants.ACTION_SERVICE_CANCEL
+import com.gunder.stopwatch.utils.Constants.ACTION_SERVICE_START
+import com.gunder.stopwatch.utils.Constants.ACTION_SERVICE_STOP
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -46,7 +52,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (hours == "00") Color.White else Blue
+                        color = if (hours == "00") Color.White else com.gunder.stopwatch.ui.theme.Blue
                     )
                 )
             }
@@ -56,7 +62,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (minutes == "00") Color.White else Blue
+                        color = if (minutes == "00") Color.White else com.gunder.stopwatch.ui.theme.Blue
                     )
                 )
             }
@@ -66,7 +72,7 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.h1.fontSize,
                         fontWeight = FontWeight.Bold,
-                        color = if (seconds == "00") Color.White else Blue
+                        color = if (seconds == "00") Color.White else com.gunder.stopwatch.ui.theme.Blue
                     )
                 )
             }
@@ -78,17 +84,17 @@ fun MainScreen(stopwatchService: StopwatchService) {
                     .fillMaxHeight(0.8f), onClick = {
                     ServiceHelper.triggerForegroundService(
                         context = context,
-                        action = if (currentState == StopwatchService.Started) ACTION_SERVICE_STOP else ACTION_SERVICE_STARTED
+                        action = if (currentState == StopwatchState.Started) ACTION_SERVICE_STOP else ACTION_SERVICE_START
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = if (currentState == StopwatchService.Started) Color.Red else Blue,
+                    backgroundColor = if (currentState == StopwatchState.Started) Red else com.gunder.stopwatch.ui.theme.Blue,
                     contentColor = Color.White
                 )
             ) {
                 Text(
-                    text = if (currentState == StopwatchService.Started) "Stop"
-                    else if ((currentState == StopwatchService.Stopped)) "Resume"
+                    text = if (currentState == StopwatchState.Started) "Stop"
+                    else if ((currentState == StopwatchState.Stopped)) "Resume"
                     else "Start"
                 )
             }
@@ -101,11 +107,11 @@ fun MainScreen(stopwatchService: StopwatchService) {
                 onClick = {
                     ServiceHelper.triggerForegroundService(
                         context = context,
-                        action = ACTION_SERVICE_RESET
+                        action = ACTION_SERVICE_CANCEL
                     )
                 },
-                enabled = seconds != "00" && currentState != stopwatchService.Started,
-                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Color.LightGray)
+                enabled = seconds != "00" && currentState != StopwatchState.Started,
+                colors = ButtonDefaults.buttonColors(disabledBackgroundColor = Light)
             )
             {
                 Text(text = "Cancel")
